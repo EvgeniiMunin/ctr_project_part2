@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ctr-app-kube
+  labels:
+    app: ctr-app-kube
+spec:
+  containers:
+    - image: evgeniimunin/ctr_online_inference:v3
+      name: ctr-app-kube
+      ports:
+        - containerPort: 8000
+  imagePullSecrets:
+    - name: regcred
