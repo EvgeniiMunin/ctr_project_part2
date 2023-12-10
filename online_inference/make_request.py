@@ -35,8 +35,8 @@ if __name__ == "__main__":
             # "http://213.219.215.18:8000/predict/",
             #"http://localhost:8000/predict/",
             #"http://3.147.55.220:8000/predict/",
-            #"http://localhost:64524/predict/", # run on forward port
-            "http://89.208.85.246:8000/predict/", # run after lifting service
+            "http://localhost:62401/predict/", # run on forward port
+            #"http://89.208.85.246:8000/predict/", # run after lifting service
             json={"data": [request_data], "features": list(data.columns)},
         )
 
