@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: ctr-app-kube
+    labels:
+      app: ctr-app-kube
+spec:
+  # modify nb of instances / replics
+  replicas: 4
+  selector:
+    matchLabels:
+      app: ctr-app-kube
+  template:
+    # template - everything that was in manifest of pod fastapi-ml
+    metadata:
+      name: ctr-app-kube
+      labels:
+        app: ctr-app-kube
+    spec:
+      containers:
+        - image: evgeniimunin/ctr_online_inference:v3
+          name: ctr-app-kube
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: regcred
