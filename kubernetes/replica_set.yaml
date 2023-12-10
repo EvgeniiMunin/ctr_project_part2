@@ -11,7 +11,7 @@ spec:
     matchLabels:
       app: ctr-app-kube
   template:
-    # template - everything that was in manifest of pod fastapi-ml
+    # template - everything that was in manifest of pod ctr-app-kube
     metadata:
       name: ctr-app-kube
       labels:

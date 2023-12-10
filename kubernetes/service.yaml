@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctr-service
+spec:
+  # add selector. selector will search for label fastapi-ml among other apps
+  selector:
+    app: ctr-app-kube
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
