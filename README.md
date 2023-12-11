@@ -30,7 +30,7 @@ echo $OS_PASSWORD
 echo $OS_PROJECT_ID
 
 # define kubeconfig
-sudo chmod 0600 kubernetes-cluster-8311_kubeconfig.yaml
+sudo chmod 0600 /path/to/kubeconfig.yaml
 export KUBECONFIG=/path/to/kubeconfig.yaml
 echo $KUBECONFIG
 
