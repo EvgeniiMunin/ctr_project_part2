@@ -84,3 +84,60 @@ Replica Set из 4х подов
 
 Сервис Load Balancer
 ![img_3.png](imgs/img_3.png)
+
+
+
+## Sem3. Terraform
+На предыдущем занятии мы подняли кластер k8s через из [личного кабинета](https://cloud.vk.com/docs/ru/base/k8s/operations/create-cluster/create-webui)
+Это удобно до тех пор, пока наша инфраструктура содержит одно или несколько приложений. 
+Но что если мы используем каскад из нескольких моделей-сервисов + сервисов с бизнес логикой, и например, 
+после обновления версии Python их нужно все передеплоить? Здесь нам на помощь приходит Terraform.
+
+
+### Установка `terraform` VKCloud 
+- Установим terraform c официального [зеркала](https://hashicorp-releases.mcs.mail.ru/terraform/1.6.1/) от VK Cloud. 
+В нашем случае мы установим версию `1.6.1_darwin_amd64`. После скачивание исполним .exe файл
+- В настройках проекта в личном кабинете переходм на вкладку Terraform.
+Скачиваем файлы `vkcs_provider.tf` и `terraform.rc`. Переименовываем `terraform.rc` в `.terraformrc` 
+и помещаем в корень домашней директории пользователя (туда, где находятся `.zshrc` для Mac или `.bashrc`для Linux).
+Файл `vkcs_provider.tf` переносим в рабочую директорию проекта. Он будет необходим для подключения к проекту внутри `vkcs`
+
+![img.png](imgs/img_tf.png)
+
+- Далее прописываем файл конфига [network.tf](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/terraform/network.tf) для настройки сети k8s кластера: сеть, подсеть, маршрутизатор
+- Для того, чтобы описать k8s кластер пропишем конфиг [main.tf](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/terraform/main.tf).
+Здесь мы указываем регион Москва и зону доступности `GZ1`. Версия k8s `1.26`, один мастер узел `STD3-4-8`, два worker-узла `STD-2-4`
+- После того, как мы прописали конфиги, запустим следующие команды terraform
+
+```bash
+# инициализирует рабочий каталог terraform
+terraform init
+# генерирует файл изменений и показывает, что изменится при запуске
+terraform plan
+# строит или изменяет инфраструктуру. При запросе подтверждения введите yes
+terraform apply 
+```
+
+- Создание кластера займет около 25 мин. После завершения мы сможем увидеть в личном кабинете node группу и сам кластер.
+
+![img_1.png](imgs/img_1_tf.png)
+
+
+### Деплой `ctr-app`
+Чтобы проверить, что наш кластер работает успешно, развернем приложение `ctr-app` в виде [ReplicaSet](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/kubernetes/replica_set.yaml), как мы это делали на прошлом занятии.
+
+```bash
+# check the cluster is ready
+kubectl get nodes
+kubectl get namespaces
+
+# deploy ctr-app replica_set
+kubectl apply -f replica_set.yaml
+kubectl describe pod ctr-app-kube-bxm74
+kubectl get pods
+```
+
+Здесь мы увидим, что 4 пода (реплики) развернуты на двух машинах. Далее запустим [клиент](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/online_inference/make_request.py)
+и проверим работу сервиса. Мы увидим, что поды возвращают ответ 200 и клиенту приходят предсказания модели.
+
+![img_2.png](imgs/img_2_tf.png)

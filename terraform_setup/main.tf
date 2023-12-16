@@ -7,7 +7,7 @@ data "vkcs_compute_flavor" "k8s-node-group-flavor" {
 }
 
 data "vkcs_kubernetes_clustertemplate" "k8s-template" {
-    version = "1.27.6"
+    version = "1.26"
 }
 
 resource "vkcs_kubernetes_cluster" "k8s-cluster" {
