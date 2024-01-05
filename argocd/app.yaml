@@ -9,10 +9,14 @@ spec:
     repoURL: https://github.com/EvgeniiMunin/ctr_project_part2.git
     targetRevision: HEAD
     path: argocd
+
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kuber
+
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
