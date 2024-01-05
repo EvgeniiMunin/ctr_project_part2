@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctr-service
+spec:
+  selector:
+    app: ctr-app-selector
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
