@@ -1,0 +1,31 @@
+# use one this single manifest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctr-app
+  labels:
+    app: ctr-app
+spec:
+  replicas: 2
+  # define replicaSet
+  selector:
+    matchLabels:
+      app: ctr-app
+  # inside template we construct pods
+  template:
+    metadata:
+      name: ctr-app
+      labels:
+        app: ctr-app
+    spec:
+      containers:
+        - image: evgeniimunin/ctr_online_inference:v3
+          name: ctr-app
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: regcred
+
+
+
+
