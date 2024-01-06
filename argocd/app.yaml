@@ -3,22 +3,27 @@ kind: Application
 metadata:
   name: ctr-app
   namespace: argocd
+  # cascade delete of app
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
+  # argo project app belongs to
   project: default
   source:
     repoURL: https://github.com/EvgeniiMunin/ctr_project_part2.git
     targetRevision: HEAD
     path: argocd/app
 
+  # kube cluster to deploy app
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kuber
 
   syncPolicy:
+    # automated sync 5 retries
     automated:
       prune: true
       selfHeal: true
+    # create kube namespace if does not exist
     syncOptions:
       - CreateNamespace=true
