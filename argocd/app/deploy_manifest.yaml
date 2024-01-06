@@ -19,7 +19,7 @@ spec:
         app: ctr-app
     spec:
       containers:
-        - image: evgeniimunin/ctr_online_inference:v4
+        - image: evgeniimunin/ctr_online_inference:v3
           name: ctr-app
           ports:
             - containerPort: 8000
