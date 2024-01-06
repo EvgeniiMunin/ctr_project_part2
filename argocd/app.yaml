@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/EvgeniiMunin/ctr_project_part2.git
     targetRevision: HEAD
-    path: argocd
+    path: argocd/app
 
   destination:
     server: 'https://kubernetes.default.svc'
