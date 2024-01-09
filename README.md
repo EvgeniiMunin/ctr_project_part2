@@ -151,13 +151,56 @@ kubectl get pods
 приложение k8s разверывается с этой новой версией образа. 
 Создаются поды с новой версией, при этом поды со старой версией закрываются.
 
+Для настройки CI мы воспользуемся двумя workflow
+- [python.yaml](https://github.com/EvgeniiMunin/ctr_project/blob/main/.github/workflows/python-package-conda.yml) 
+для запуска автотестов и линтера, который триггериться после коммита в PR
+- [docker-ci.yaml](https://github.com/EvgeniiMunin/ctr_project/blob/main/.github/workflows/docker-ci.yml)
+для сборки и записи Docker образа в Docker Hub. Workflow триггериться после коммита в PR (при этом образ записывается с тэгом `pr-*`)
+а также после коммита в `main` (в этом случае тэг имеет аналогичное название)
 
+![img_1.png](imgs/img_1_ci.png)
+
+Для настройки CD мы воспользуемся инструментов [ArgoCD](https://argo-cd.readthedocs.io/en/stable/).
+Здесь нашей задачей будет сделать, чтобы версия развернутого на кластере k8s приложения менялась
+автоматически после коммита изменений в манифест в `main` ветке.
+
+Для того чтобы запустить ArgoCD подготовим следующие манифесты
+
+- [Deployment](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/argocd/app/deploy_manifest.yaml) c указанием образа в Docker Hub, который будем вытягивать для запуска
+а также количество реплик подов в ReplicaSet
+- [Service](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/argocd/app/service.yaml) для проброски URL адреса на весь ReplicaSet целиком
+- [Application](https://github.com/EvgeniiMunin/ctr_project_part2/blob/main/argocd/app.yaml), где указываем Git репозиторий, с которым мы будем синхронизировать приложение,
+адрес k8s кластера и политику синхронизации и закрытия приложения.
+Также в манифесте приложения мы указываем путь до манифестов Deployment, Service, чтобы ArgoCD их нашел на Github.
+
+### Основные команды
+
+```bash
+kubectl create namespace argocd
+
+# install argocd and init password
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+argocd admin initial-password -n argocd
+
+# forward ports and access argocd UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# run argocd app and deploy ctr_app
+kubectl apply -f app.yaml 
+
+# get external-ip address to send requests to ctr_app Service
+kubectl get services -n kuber
+```
+
+### Результаты
+
+После запуска ArgoCD приложения, оно вместе с подами должно отобразиться в UI.
 ![img.png](imgs/img_argocd.png)
 
-
+Если мы запустим клиент по URL сервиса, то в логах подов сможем увидеть ответы на запросы.
 ![img_1.png](imgs/img_argocd_1.png)
 
 Мы заменили версию Docker образа `ctr_online_inference:v3` на `ctr_online_inference:v4`. 
 После коммита в `main` ветку, можем видеть, как ArgoCD приложение синхронизируется с новым мейном,
-создавая новые поды с версией образа `v4` и закрывая старые поды.
+создавая новые поды с версией образа `v4` и закрывая старые.
 ![img_2.png](imgs/img_argocd_2.png)
