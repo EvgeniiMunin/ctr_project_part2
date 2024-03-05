@@ -45,16 +45,4 @@ resource "vkcs_kubernetes_node_group" "k8s-node-group" {
         key = "disktype"
         value = "ssd"
     }
-
-  taints {
-        key = "taintkey1"
-        value = "taintvalue1"
-        effect = "PreferNoSchedule"
-    }
-
-  taints {
-        key = "taintkey2"
-        value = "taintvalue2"
-        effect = "PreferNoSchedule"
-    }
 }
