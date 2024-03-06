@@ -32,10 +32,7 @@ if __name__ == "__main__":
         logger.info(f"check data.columns: {list(data.columns)}")
 
         response = requests.post(
-            #"http://localhost:8000/predict/",
-            #"http://localhost:49193/predict/", # run on forward port
-            #"http://89.208.85.246:8000/predict/", # run after lifting service
-            "http://212.233.98.234:8000/predict/",
+            "http://89.208.208.115:8000/predict/",
             json={"data": [request_data], "features": list(data.columns)},
         )
 

@@ -17,7 +17,7 @@ spec:
   # kube cluster to deploy app
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: kuber
+    namespace: ctr-app-namespace
 
   syncPolicy:
     # automated sync 5 retries
